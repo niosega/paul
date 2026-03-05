@@ -48,6 +48,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       _toast('Enter a valid amount.', error: true);
       return;
     }
+    if (amount > 99999999) {
+      _toast('Amount is too large.', error: true);
+      return;
+    }
     if (_selectedTag == null) {
       _toast('Select a category.', error: true);
       return;

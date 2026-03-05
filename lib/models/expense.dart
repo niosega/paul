@@ -1,3 +1,6 @@
+const _validCurrencies = {'JPY', 'EUR'};
+const _validTags = {'Food', 'Housing', 'Leisure', 'Investment', 'Other'};
+
 class Expense {
   final int? id;
   final double amount;
@@ -24,11 +27,23 @@ class Expense {
   }
 
   factory Expense.fromMap(Map<String, dynamic> map) {
+    final currency = map['currency'] as String;
+    final tag = map['tag'] as String;
+    final amount = (map['amount'] as num).toDouble();
+    if (!_validCurrencies.contains(currency)) {
+      throw FormatException('Invalid currency: $currency');
+    }
+    if (!_validTags.contains(tag)) {
+      throw FormatException('Invalid tag: $tag');
+    }
+    if (amount <= 0 || amount > 99999999) {
+      throw FormatException('Amount out of range: $amount');
+    }
     return Expense(
       id: map['id'] as int?,
-      amount: (map['amount'] as num).toDouble(),
-      currency: map['currency'] as String,
-      tag: map['tag'] as String,
+      amount: amount,
+      currency: currency,
+      tag: tag,
       createdAt: DateTime.parse(map['created_at'] as String),
     );
   }

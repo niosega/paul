@@ -95,10 +95,9 @@ class _StatsScreenState extends State<StatsScreen> {
                     );
                   }
                   if (snapshot.hasError) {
-                    return Center(
-                        child: Text('Error: ${snapshot.error}',
-                            style:
-                                const TextStyle(color: Colors.white38)));
+                    return const Center(
+                        child: Text('Could not load expenses.',
+                            style: TextStyle(color: Colors.white38)));
                   }
 
                   final expenses = snapshot.data ?? [];

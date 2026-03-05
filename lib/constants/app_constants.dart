@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const List<String> predefinedTags = [
-  'Courses',
+  'Grocery',
   'Café',
   'Restaurant',
   'Housing',
@@ -13,7 +13,7 @@ const List<String> predefinedTags = [
 const List<String> currencies = ['JPY', 'EUR'];
 
 const Map<String, Color> tagColors = {
-  'Courses': Color(0xFFFF6B6B),
+  'Grocery': Color(0xFFFF6B6B),
   'Café': Color(0xFFD4A76A),
   'Restaurant': Color(0xFFFF8C42),
   'Housing': Color(0xFF4ECDC4),
@@ -23,7 +23,7 @@ const Map<String, Color> tagColors = {
 };
 
 const Map<String, IconData> tagIcons = {
-  'Courses': Icons.shopping_cart_rounded,
+  'Grocery': Icons.shopping_cart_rounded,
   'Café': Icons.local_cafe_rounded,
   'Restaurant': Icons.dinner_dining_rounded,
   'Housing': Icons.home_rounded,

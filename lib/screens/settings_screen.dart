@@ -176,7 +176,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 32),
 
-              // Section label
               Text(
                 'DATA',
                 style: TextStyle(
@@ -188,7 +187,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 10),
 
-              // Export card
               _SettingsTile(
                 icon: Icons.storage_rounded,
                 iconColor: const Color(0xFF4ECDC4),
@@ -212,7 +210,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Section label
               Text(
                 'ABOUT',
                 style: TextStyle(
@@ -224,7 +221,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 10),
 
-              // About card
               _SettingsTile(
                 icon: Icons.info_outline_rounded,
                 iconColor: const Color(0xFF6C63FF),

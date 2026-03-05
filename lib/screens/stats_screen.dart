@@ -57,7 +57,6 @@ class _StatsScreenState extends State<StatsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
               child: Column(
@@ -142,11 +141,8 @@ class _StatsScreenState extends State<StatsScreen> {
                     );
                   }
 
-                  // Per-currency, per-tag totals (for pie charts)
                   final currencyTagTotals = <String, Map<String, double>>{};
-                  // Per-tag, per-currency totals (for breakdown rows)
                   final tagCurrencyTotals = <String, Map<String, double>>{};
-                  // Grand totals per currency
                   final grandTotals = <String, double>{};
 
                   for (final e in expenses) {
@@ -167,7 +163,6 @@ class _StatsScreenState extends State<StatsScreen> {
                   return ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     children: [
-                      // Grand total card
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 18),
@@ -216,7 +211,6 @@ class _StatsScreenState extends State<StatsScreen> {
                       ),
                       const SizedBox(height: 14),
 
-                      // Pie charts — one per currency, swipeable
                       SizedBox(
                         height: 330,
                         child: PageView.builder(
@@ -317,7 +311,6 @@ class _StatsScreenState extends State<StatsScreen> {
                       ],
                       const SizedBox(height: 14),
 
-                      // Category breakdown
                       Text(
                         'BREAKDOWN',
                         style: TextStyle(
@@ -399,10 +392,7 @@ class _StatsScreenState extends State<StatsScreen> {
                             tagColors[expense.tag] ?? Colors.grey;
                         final icon =
                             tagIcons[expense.tag] ?? Icons.category_rounded;
-                        final symbol = expense.currency == 'JPY' ? '¥' : '€';
-                        final amountStr = expense.currency == 'JPY'
-                            ? '$symbol${expense.amount.toStringAsFixed(0)}'
-                            : '$symbol${expense.amount.toStringAsFixed(2)}';
+                        final amountStr = _formatAmount(expense.amount, expense.currency);
                         final dateStr = DateFormat('dd MMM, HH:mm')
                             .format(expense.createdAt);
                         return Padding(

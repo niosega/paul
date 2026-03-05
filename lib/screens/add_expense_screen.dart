@@ -33,30 +33,25 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     super.dispose();
   }
 
+  void _toast(String msg, {bool error = false}) {
+    Fluttertoast.showToast(
+      msg: msg,
+      backgroundColor: error ? const Color(0xFFFF6B6B) : const Color(0xFF6C63FF),
+      textColor: Colors.white,
+      gravity: ToastGravity.TOP,
+    );
+  }
+
   Future<void> _handleValidate() async {
-    final amountText = _amountController.text.trim();
-    final amount = double.tryParse(amountText);
-
+    final amount = double.tryParse(_amountController.text.trim());
     if (amount == null || amount <= 0) {
-      Fluttertoast.showToast(
-        msg: 'Enter a valid amount.',
-        backgroundColor: const Color(0xFFFF6B6B),
-        textColor: Colors.white,
-        gravity: ToastGravity.TOP,
-      );
+      _toast('Enter a valid amount.', error: true);
       return;
     }
-
     if (_selectedTag == null) {
-      Fluttertoast.showToast(
-        msg: 'Select a category.',
-        backgroundColor: const Color(0xFFFF6B6B),
-        textColor: Colors.white,
-        gravity: ToastGravity.TOP,
-      );
+      _toast('Select a category.', error: true);
       return;
     }
-
     try {
       final db = await DatabaseHelper.getInstance();
       await db.insertExpense(Expense(
@@ -65,25 +60,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         tag: _selectedTag!,
         createdAt: DateTime.now(),
       ));
-
-      Fluttertoast.showToast(
-        msg: 'Expense saved!',
-        backgroundColor: const Color(0xFF6C63FF),
-        textColor: Colors.white,
-        gravity: ToastGravity.TOP,
-      );
-
+      _toast('Expense saved!');
       _amountController.clear();
       setState(() {
         _selectedCurrency = currencies.first;
         _selectedTag = null;
       });
-    } catch (e) {
-      Fluttertoast.showToast(
-        msg: 'Error saving expense.',
-        backgroundColor: const Color(0xFFFF6B6B),
-        textColor: Colors.white,
-      );
+    } catch (_) {
+      _toast('Error saving expense.', error: true);
     }
   }
 
@@ -102,7 +86,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header
                     Row(
                       children: [
                         const Text(
@@ -123,8 +106,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       ],
                     ),
                     const SizedBox(height: 28),
-
-                    // Amount input card
                     GestureDetector(
                       onTap: () => _focusNode.requestFocus(),
                       child: AnimatedContainer(
@@ -218,8 +199,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       ),
                     ),
                     const SizedBox(height: 28),
-
-                    // Category label
                     Text(
                       'CATEGORY',
                       style: TextStyle(
@@ -240,7 +219,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
             ),
 
-            // Save button — fixed at bottom, rises with keyboard
             Padding(
               padding: EdgeInsets.fromLTRB(24, 8, 24, bottomInset + 16),
               child: SizedBox(

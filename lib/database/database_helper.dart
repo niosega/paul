@@ -3,15 +3,14 @@ import 'package:path/path.dart';
 import '../models/expense.dart';
 
 class DatabaseHelper {
-  static DatabaseHelper? _instance;
+  static final _instance = DatabaseHelper._();
   static Database? _database;
 
   DatabaseHelper._();
 
   static Future<DatabaseHelper> getInstance() async {
-    _instance ??= DatabaseHelper._();
-    _database ??= await _instance!._openDatabase();
-    return _instance!;
+    _database ??= await _instance._openDatabase();
+    return _instance;
   }
 
   Future<Database> _openDatabase() async {

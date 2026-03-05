@@ -18,6 +18,14 @@ class StatsScreen extends StatefulWidget {
 class _StatsScreenState extends State<StatsScreen> {
   DateTime _selectedMonth =
       DateTime(DateTime.now().year, DateTime.now().month);
+  final PageController _pageController = PageController();
+  int _chartPage = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   Future<List<Expense>> _fetchExpenses() async {
     final db = await DatabaseHelper.getInstance();
@@ -127,29 +135,27 @@ class _StatsScreenState extends State<StatsScreen> {
                     );
                   }
 
-                  // Build per-tag, per-currency totals
+                  // Per-currency, per-tag totals (for pie charts)
+                  final currencyTagTotals = <String, Map<String, double>>{};
+                  // Per-tag, per-currency totals (for breakdown rows)
                   final tagCurrencyTotals = <String, Map<String, double>>{};
-                  for (final e in expenses) {
-                    tagCurrencyTotals.putIfAbsent(e.tag, () => {});
-                    tagCurrencyTotals[e.tag]![e.currency] =
-                        (tagCurrencyTotals[e.tag]![e.currency] ?? 0) +
-                            e.amount;
-                  }
-
-                  // Currency-agnostic totals for pie chart proportions
-                  final tagTotalsForChart = tagCurrencyTotals.map(
-                    (tag, currencyMap) => MapEntry(
-                      tag,
-                      currencyMap.values.fold(0.0, (a, b) => a + b),
-                    ),
-                  );
-
                   // Grand totals per currency
                   final grandTotals = <String, double>{};
+
                   for (final e in expenses) {
+                    currencyTagTotals.putIfAbsent(e.currency, () => {});
+                    currencyTagTotals[e.currency]![e.tag] =
+                        (currencyTagTotals[e.currency]![e.tag] ?? 0) + e.amount;
+
+                    tagCurrencyTotals.putIfAbsent(e.tag, () => {});
+                    tagCurrencyTotals[e.tag]![e.currency] =
+                        (tagCurrencyTotals[e.tag]![e.currency] ?? 0) + e.amount;
+
                     grandTotals[e.currency] =
                         (grandTotals[e.currency] ?? 0) + e.amount;
                   }
+
+                  final activeCurrencies = currencyTagTotals.keys.toList();
 
                   return ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -203,15 +209,105 @@ class _StatsScreenState extends State<StatsScreen> {
                       ),
                       const SizedBox(height: 14),
 
-                      // Pie chart card
-                      Container(
-                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1C1C2E),
-                          borderRadius: BorderRadius.circular(24),
+                      // Pie charts — one per currency, swipeable
+                      SizedBox(
+                        height: 330,
+                        child: PageView.builder(
+                          controller: _pageController,
+                          itemCount: activeCurrencies.length,
+                          onPageChanged: (i) =>
+                              setState(() => _chartPage = i),
+                          itemBuilder: (context, i) {
+                            final currency = activeCurrencies[i];
+                            final symbol = currency == 'JPY' ? '¥' : '€';
+                            return Container(
+                              margin: EdgeInsets.only(
+                                right: i < activeCurrencies.length - 1 ? 12 : 0,
+                              ),
+                              padding:
+                                  const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF1C1C2E),
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF6C63FF)
+                                              .withValues(alpha: 0.15),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Text(
+                                          '$symbol $currency',
+                                          style: const TextStyle(
+                                            color: Color(0xFF6C63FF),
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                      if (activeCurrencies.length > 1) ...[
+                                        const Spacer(),
+                                        Text(
+                                          'swipe',
+                                          style: TextStyle(
+                                            color: Colors.white
+                                                .withValues(alpha: 0.2),
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Icon(
+                                          Icons.swipe_rounded,
+                                          size: 14,
+                                          color: Colors.white
+                                              .withValues(alpha: 0.2),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Expanded(
+                                    child: ExpensePieChart(
+                                      tagTotals:
+                                          currencyTagTotals[currency]!,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
-                        child: ExpensePieChart(tagTotals: tagTotalsForChart),
                       ),
+                      if (activeCurrencies.length > 1) ...[
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            activeCurrencies.length,
+                            (i) => AnimatedContainer(
+                              duration: const Duration(milliseconds: 250),
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 3),
+                              width: _chartPage == i ? 20 : 6,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                color: _chartPage == i
+                                    ? const Color(0xFF6C63FF)
+                                    : Colors.white.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: 14),
 
                       // Category breakdown

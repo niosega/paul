@@ -20,11 +20,18 @@ class _StatsScreenState extends State<StatsScreen> {
       DateTime(DateTime.now().year, DateTime.now().month);
   final PageController _pageController = PageController();
   int _chartPage = 0;
+  int _localRefreshKey = 0;
 
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  Future<void> _deleteExpense(int id) async {
+    final db = await DatabaseHelper.getInstance();
+    await db.deleteExpense(id);
+    setState(() => _localRefreshKey++);
   }
 
   Future<List<Expense>> _fetchExpenses() async {
@@ -77,7 +84,7 @@ class _StatsScreenState extends State<StatsScreen> {
 
             Expanded(
               child: FutureBuilder<List<Expense>>(
-                key: ValueKey('${_selectedMonth}_${widget.refreshKey}'),
+                key: ValueKey('${_selectedMonth}_${widget.refreshKey}_$_localRefreshKey'),
                 future: _fetchExpenses(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -376,6 +383,110 @@ class _StatsScreenState extends State<StatsScreen> {
                         );
                       }),
 
+                      const SizedBox(height: 14),
+                      Text(
+                        'EXPENSES',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white.withValues(alpha: 0.3),
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      ...expenses.map((expense) {
+                        final color =
+                            tagColors[expense.tag] ?? Colors.grey;
+                        final icon =
+                            tagIcons[expense.tag] ?? Icons.category_rounded;
+                        final symbol = expense.currency == 'JPY' ? '¥' : '€';
+                        final amountStr = expense.currency == 'JPY'
+                            ? '$symbol${expense.amount.toStringAsFixed(0)}'
+                            : '$symbol${expense.amount.toStringAsFixed(2)}';
+                        final dateStr = DateFormat('dd MMM, HH:mm')
+                            .format(expense.createdAt);
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Dismissible(
+                            key: ValueKey(expense.id),
+                            direction: DismissDirection.endToStart,
+                            onDismissed: (_) => _deleteExpense(expense.id!),
+                            background: Container(
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.only(right: 20),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFF6B6B)
+                                    .withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: const Color(0xFFFF6B6B)
+                                      .withValues(alpha: 0.4),
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.delete_rounded,
+                                color: Color(0xFFFF6B6B),
+                                size: 22,
+                              ),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF1C1C2E),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 38,
+                                    height: 38,
+                                    decoration: BoxDecoration(
+                                      color: color.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Icon(icon, color: color, size: 18),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          expense.tag,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          dateStr,
+                                          style: TextStyle(
+                                            color: Colors.white
+                                                .withValues(alpha: 0.35),
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Text(
+                                    amountStr,
+                                    style: TextStyle(
+                                      color: color,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
                       const SizedBox(height: 8),
                     ],
                   );

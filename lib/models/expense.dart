@@ -1,5 +1,5 @@
 const _validCurrencies = {'JPY', 'EUR'};
-const _validTags = {'Food', 'Café', 'Restaurant', 'Housing', 'Leisure', 'Investment', 'Other'};
+const _validTags = {'Courses', 'Café', 'Restaurant', 'Housing', 'Leisure', 'Investment', 'Other'};
 
 class Expense {
   final int? id;

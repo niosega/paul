@@ -13,23 +13,66 @@ class TagChipGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 4,
+    return GridView.count(
+      crossAxisCount: 3,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+      childAspectRatio: 1.15,
       children: predefinedTags.map((tag) {
         final color = tagColors[tag]!;
+        final icon = tagIcons[tag]!;
         final isSelected = selectedTag == tag;
-        return ChoiceChip(
-          label: Text(tag),
-          selected: isSelected,
-          onSelected: (_) => onSelected(tag),
-          backgroundColor: color.withValues(alpha: 0.15),
-          selectedColor: color.withValues(alpha: 0.85),
-          labelStyle: TextStyle(
-            color: isSelected ? Colors.white : Colors.black87,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+        return GestureDetector(
+          onTap: () => onSelected(tag),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? color.withValues(alpha: 0.15)
+                  : const Color(0xFF1C1C2E),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isSelected
+                    ? color
+                    : Colors.white.withValues(alpha: 0.08),
+                width: isSelected ? 1.5 : 1,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? color.withValues(alpha: 0.2)
+                        : Colors.white.withValues(alpha: 0.05),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    color: isSelected ? color : Colors.white38,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  tag,
+                  style: TextStyle(
+                    color: isSelected ? color : Colors.white54,
+                    fontSize: 12,
+                    fontWeight:
+                        isSelected ? FontWeight.w700 : FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
-          side: BorderSide(color: color, width: isSelected ? 2 : 1),
         );
       }).toList(),
     );

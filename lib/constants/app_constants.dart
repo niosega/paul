@@ -11,9 +11,17 @@ const List<String> predefinedTags = [
 const List<String> currencies = ['JPY', 'EUR'];
 
 const Map<String, Color> tagColors = {
-  'Food': Color(0xFFE57373),
-  'Housing': Color(0xFF64B5F6),
-  'Leisure': Color(0xFF81C784),
-  'Investment': Color(0xFFFFD54F),
-  'Other': Color(0xFFBA68C8),
+  'Food': Color(0xFFFF6B6B),
+  'Housing': Color(0xFF4ECDC4),
+  'Leisure': Color(0xFF45B7D1),
+  'Investment': Color(0xFFFFD93D),
+  'Other': Color(0xFFA29BFE),
+};
+
+const Map<String, IconData> tagIcons = {
+  'Food': Icons.restaurant_rounded,
+  'Housing': Icons.home_rounded,
+  'Leisure': Icons.sports_esports_rounded,
+  'Investment': Icons.trending_up_rounded,
+  'Other': Icons.category_rounded,
 };

@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as p;
 import 'package:url_launcher/url_launcher.dart';
+import '../constants/git_version.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -232,6 +233,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   color: Colors.white38,
                 ),
                 onTap: () => _showAboutDialog(context),
+              ),
+              const SizedBox(height: 24),
+              Center(
+                child: Text(
+                  gitVersion,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'monospace',
+                  ),
+                ),
               ),
             ],
           ),

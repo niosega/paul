@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as p;
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -35,6 +36,114 @@ class _SettingsScreenState extends State<SettingsScreen> {
     } finally {
       if (mounted) setState(() => _exporting = false);
     }
+  }
+
+  void _showAboutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: const Color(0xFF1C1C2E),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(28, 32, 28, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF6C63FF).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(
+                  Icons.auto_awesome_rounded,
+                  color: Color(0xFF6C63FF),
+                  size: 28,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'PAUL',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Paul Audits User\'s Life',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.6),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 20),
+              GestureDetector(
+                onTap: () => launchUrl(
+                  Uri.parse('https://github.com/niosega/paul'),
+                  mode: LaunchMode.externalApplication,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.code_rounded,
+                      size: 14,
+                      color: const Color(0xFF6C63FF).withValues(alpha: 0.7),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'github.com/niosega/paul',
+                      style: TextStyle(
+                        color: const Color(0xFF6C63FF).withValues(alpha: 0.7),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        decoration: TextDecoration.underline,
+                        decorationColor: const Color(0xFF6C63FF).withValues(alpha: 0.4),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Made with \u2665 (and AI)',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.25),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: TextButton.styleFrom(
+                    backgroundColor: const Color(0xFF6C63FF).withValues(alpha: 0.15),
+                    foregroundColor: const Color(0xFF6C63FF),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  child: const Text(
+                    'Got it',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   void _showError(String msg) {
@@ -100,6 +209,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         color: Colors.white38,
                       ),
                 onTap: _exporting ? null : _exportDb,
+              ),
+              const SizedBox(height: 24),
+
+              // Section label
+              Text(
+                'ABOUT',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white.withValues(alpha: 0.3),
+                  letterSpacing: 1.5,
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // About card
+              _SettingsTile(
+                icon: Icons.info_outline_rounded,
+                iconColor: const Color(0xFF6C63FF),
+                title: 'What is Paul?',
+                subtitle: 'Learn more about this app',
+                trailing: const Icon(
+                  Icons.chevron_right_rounded,
+                  size: 20,
+                  color: Colors.white38,
+                ),
+                onTap: () => _showAboutDialog(context),
               ),
             ],
           ),

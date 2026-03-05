@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'screens/add_expense_screen.dart';
+import 'screens/settings_screen.dart';
 import 'screens/stats_screen.dart';
 
 void main() {
@@ -84,6 +85,7 @@ class _MainShellState extends State<MainShell> {
         children: [
           const AddExpenseScreen(),
           StatsScreen(refreshKey: _statsRefreshKey),
+          const SettingsScreen(),
         ],
       ),
       bottomNavigationBar: NavigationBar(
@@ -102,6 +104,11 @@ class _MainShellState extends State<MainShell> {
             icon: Icon(Icons.donut_large_outlined),
             selectedIcon: Icon(Icons.donut_large_rounded),
             label: 'Stats',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings_rounded),
+            label: 'Settings',
           ),
         ],
       ),

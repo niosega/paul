@@ -1,5 +1,7 @@
-const _validCurrencies = {'JPY', 'EUR'};
-const _validTags = {'Grocery', 'Café', 'Restaurant', 'Housing', 'Leisure', 'Investment', 'Other'};
+import '../constants/app_constants.dart';
+
+final _validCurrencies = currencies.toSet();
+final _validTags = predefinedTags.toSet();
 
 class Expense {
   final int? id;
